@@ -190,20 +190,27 @@ function! airline#parts#readonly()
 endfunction
 
 function! airline#parts#filetype()
-  return (airline#util#winwidth() < 90 && strlen(&filetype) > 3)
-        \ ? matchstr(&filetype, '...'). (&encoding is? 'utf-8' ? "\u2026" : '>')
-        \ : &filetype
+  if empty(&ft)
+    return ''
+  endif
+  let ftstring = &ft . " | "
+  return (airline#util#winwidth() < 90 && strlen(ftstring) > 3)
+        \ ? matchstr(ftstring, '...'). (&encoding is? 'utf-8' ? "\u2026" : '>')
+        \ : ftstring
 endfunction
 
 function! airline#parts#ffenc()
   let expected = get(g:, 'airline#parts#ffenc#skip_expected_string', '')
-  let bomb     = &bomb ? '[BOM]' : ''
-  let noeolf   = &eol ? '' : '[!EOL]'
-  let ff       = strlen(&ff) ? '['.&ff.']' : ''
-  if expected is# &fenc.bomb.noeolf.ff
+  let bomb     = &bomb ? '[bom]' : ''
+  let noeolf   = &eol ? '' : '[!eol]'
+  let enc = &fenc.bomb.noeolf
+  if !empty(&ff)
+    let enc .= !empty(&fenc) ? ' | '.&ff : &ff
+
+  if expected is# enc
     return ''
   else
-    return &fenc.bomb.noeolf.ff
+    return enc
   endif
 endfunction
 

@@ -100,6 +100,7 @@ function! airline#extensions#tabline#tabs#get()
     endif
   endif
   call airline#extensions#tabline#add_tab_label(b)
+  call b.add_section_spaced('airline_tablabel', substitute(fnamemodify(getcwd(), ":~"), '^.\+\(.\{50,\}\)\@=', '..', ''))
 
   let s:current_bufnr = curbuf
   let s:current_tabnr = curtab
